@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({ Key? key }) : super(key: key);
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  late String employeeName;
+  late String employeeEmail;
+  late String employeeStaffCode;
+  late String employeeRole;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   onChanged: (value) {
                     //Do something with the user input.
+                    employeeName = value;
                   },
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
@@ -73,6 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   onChanged: (value) {
                     //Do something with the user input.
+                    employeeEmail = value;
                   },
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
@@ -97,6 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   onChanged: (value) {
                     //Do something with the user input.
+                    employeeStaffCode = value;
                   },
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
@@ -117,11 +125,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 15.0),
                 TextFormField(
                   onChanged: (value) {
                     //Do something with the user input.
+                    employeeRole = value;
                   },
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
@@ -177,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 100.0),
                 Row(
-                  mainAxisAlignment : MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
                       height: 50.0,

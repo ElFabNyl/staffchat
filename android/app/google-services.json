@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "59169000857",
+    "project_id": "staffchat-27418",
+    "storage_bucket": "staffchat-27418.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59169000857:android:64d5a17a6ef85757eb5708",
+        "android_client_info": {
+          "package_name": "com.globex.staffchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "59169000857-3ng5t0tht831cl36id2vdp7c9rbe19u3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4eG5ajtxucg-mN7j3c72K3rQizQpjNvM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "59169000857-3ng5t0tht831cl36id2vdp7c9rbe19u3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
