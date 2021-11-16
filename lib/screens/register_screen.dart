@@ -196,7 +196,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             'employeeStaffCode': employeeStaffCode,
                             'employeeRole': employeeRole
                           });
-                          print('ALLLLLLLLLLLL ISSSSSS GOODDDDDDDDDD');
+                          Navigator.pushNamed(context, 'chat_screen');
+
                         } catch (e) {
                           print(e.toString());
                         }
