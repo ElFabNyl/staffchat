@@ -1,10 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:staffchat/screens/chat_screen.dart';
 import 'package:staffchat/screens/login_screen.dart';
 import 'package:staffchat/screens/register_screen.dart';
 import 'package:staffchat/screens/splash_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

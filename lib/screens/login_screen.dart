@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staffchat/controller/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -8,6 +9,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     //Do something with the user input.
                   },
+                  keyboardType: TextInputType.emailAddress,
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
                     hintText: 'example@globexcam.com',
@@ -78,7 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
                     hintText: 'Enter your Staff code',
-                    
                     labelStyle: TextStyle(color: Colors.black),
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -115,7 +118,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 15.0,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        //
+                        dynamic result = await _auth.signInAnon();
+
+                        if (result == null) {
+                          print('error during the sign in process');
+                        } else {
+                          print('user has successfully signed in');
+                          print(result);
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           primary: Colors.green, elevation: 0.0),
                       child: const Padding(
@@ -130,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 100.0),
                 Row(
-                  mainAxisAlignment : MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
                       height: 50.0,

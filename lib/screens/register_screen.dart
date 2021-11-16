@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -8,6 +11,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+// on creait ici une nouvelle instance d'authentification
+  final _auth = FirebaseAuth.instance;
+
   late String employeeName;
   late String employeeEmail;
   late String employeeStaffCode;
@@ -41,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           color: Colors.grey,
                           fontSize: 18,
                           letterSpacing: 12.0,
-                          fontWeight: FontWeight.w600),
+                          fontWeight: FontWeight.w800),
                     ),
                     SizedBox(
                       height: 50.0,
@@ -81,6 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     //Do something with the user input.
                     employeeEmail = value;
                   },
+                  keyboardType: TextInputType.emailAddress,
                   cursorColor: Colors.grey,
                   decoration: const InputDecoration(
                     hintText: 'Employee professional email',
@@ -170,7 +177,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: 15.0,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        //on utilise l'instance d'authentification de firebase ici pour créer un enregistrement
+                        try {
+                          final result =
+                              await _auth.createUserWithEmailAndPassword(
+                                  email: employeeEmail,
+                                  password: employeeStaffCode);
+
+                          User? user = result.user;
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .set({
+                            'employeeUID': user.uid,
+                            'employeeName': employeeName,
+                            'employeeEmail': employeeEmail,
+                            'employeeStaffCode': employeeStaffCode,
+                            'employeeRole': employeeRole
+                          });
+                          print('ALLLLLLLLLLLL ISSSSSS GOODDDDDDDDDD');
+                        } catch (e) {
+                          print(e.toString());
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           primary: Colors.green, elevation: 0.0),
                       child: const Padding(
