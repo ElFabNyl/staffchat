@@ -12,7 +12,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
-  late User loggedInUser;
+  late Map loggedInUser;
 
   @override
   void initState() {
@@ -23,12 +23,16 @@ class _ChatScreenState extends State<ChatScreen> {
 //method to check if there's a current user who signed in
   void getCurrentUser() async {
     try {
-      final user = await _auth.currentUser;
+      final user = _auth.currentUser;
 
       if (user != null) {
-        loggedInUser = user;
-       final data = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-        print(data);
+        
+        final result = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+            loggedInUser = result.data()!;
+        print(loggedInUser['employeeName']);
       }
     } catch (e) {
       print(e);
@@ -53,8 +57,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 //Implement logout functionality
               }),
         ],
-        title: const Text('Staff Chat'),
-        backgroundColor: Colors.lightBlueAccent,
+        title: const Text('Globexcam Staff Chat'),
+        backgroundColor: Colors.green,
       ),
       body: SafeArea(
         child: Column(
