@@ -12,7 +12,11 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   late Map loggedInUser;
+  late String name;
+  late String staffCode;
+  late String messageText;
 
   @override
   void initState() {
@@ -26,16 +30,27 @@ class _ChatScreenState extends State<ChatScreen> {
       final user = _auth.currentUser;
 
       if (user != null) {
-        
         final result = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .get();
-            loggedInUser = result.data()!;
-        print(loggedInUser['employeeName']);
+        loggedInUser = result.data()!;
+        name = loggedInUser['employeeName'];
+        staffCode = loggedInUser['employeeStaffCode'];
+
+        print(staffCode);
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+// cette fonction recupère les données en stream dans la BD
+  void getMessagesStream() async {
+    await for (var snapshot in _firestore.collection('messages').snapshots()) {
+      for (var message in snapshot.docs) {
+        print(message.data());
+      }
     }
   }
 
@@ -46,15 +61,20 @@ class _ChatScreenState extends State<ChatScreen> {
         leading: null,
         actions: <Widget>[
           //this button appears if the current user is an admin
+
           IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
                 //Implement add staff
+                Navigator.pushNamed(context, 'register_screen');
               }),
           IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                //Implement logout functionality
+                // //Implement logout functionality
+                _auth.signOut();
+                Navigator.pop(context);
+                
               }),
         ],
         title: const Text('Globexcam Staff Chat'),
@@ -74,13 +94,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       onChanged: (value) {
                         //Do something with the user input.
+                        messageText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      //messageText + loggedInUser['employeeName']
+
+                      _firestore
+                          .collection('messages')
+                          .add({'text': messageText, 'sender': name});
                     },
                     child: const Text(
                       'Send',

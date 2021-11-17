@@ -4,8 +4,7 @@ import 'package:staffchat/screens/chat_screen.dart';
 import 'package:staffchat/screens/login_screen.dart';
 import 'package:staffchat/screens/register_screen.dart';
 import 'package:staffchat/screens/splash_screen.dart';
-
-void main() async{
+ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: 'register_screen',
+        initialRoute: 'login_screen',
         routes: {
           'login_screen': (context) => const LoginScreen(),
           'register_screen': (context) => const RegisterScreen(),
