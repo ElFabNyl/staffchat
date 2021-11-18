@@ -17,6 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late String name;
   late String staffCode;
   late String messageText;
+  List<Text> messagesWidgets = [];
 
   @override
   void initState() {
@@ -74,7 +75,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 // //Implement logout functionality
                 _auth.signOut();
                 Navigator.pop(context);
-                
               }),
         ],
         title: const Text('Globexcam Staff Chat'),
@@ -85,6 +85,31 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            //here we transform the streams into widgets
+            StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('messages').snapshots(),
+              builder: (context, snapshot) {
+                try {
+                  if (snapshot.hasData) {
+                    final messages = snapshot.data!.docs;
+
+                    for (var message in messages) {
+                      final messageText = message["text"];
+                      final messageSender = message['Sender'];
+                      final messageWidget = Text(
+                        '$messageText from $messageSender',
+                        style: const TextStyle(color: Colors.red),
+                      );
+
+                      messagesWidgets.add(messageWidget);
+                    }
+                  }
+                } catch (e) {
+                  print(e.toString());
+                }
+                return Column(children: messagesWidgets);
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
