@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:staffchat/constants.dart';
 
+User? loggedInUser;
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -15,6 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _firestore = FirebaseFirestore.instance;
   List<Widget> messagesWidgets = [];
   String messageText = "";
+  final messageTextController = TextEditingController();
 
   @override
   void initState() {
@@ -33,10 +36,10 @@ class _ChatScreenState extends State<ChatScreen> {
       if (snapshot.exists) {
         return snapshot.data()!;
       } else {
-        throw "donne pas trouve dans firebase";
+        throw "Data not found";
       }
     } else {
-      throw "pas d'utilisateur";
+      throw "no user found";
     }
   }
 
@@ -65,7 +68,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         //Implement add staff
-                        Navigator.pushNamed(context, 'register_screen');
+                        Navigator.pushReplacementNamed(
+                            context, 'register_screen');
                       }),
                 IconButton(
                     icon: const Icon(Icons.close),
@@ -80,7 +84,10 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             body: Builder(builder: (context) {
               if (!ready) {
-                return const CircularProgressIndicator();
+                return const Center(
+                    child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                ));
               }
               Map<String, dynamic> userData = snapshot.data!;
               String name = userData["employeeName"];
@@ -95,21 +102,33 @@ class _ChatScreenState extends State<ChatScreen> {
                         stream: _firestore.collection('messages').snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return ListView.builder(
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, i) {
-                                  final message = snapshot.data!.docs[i];
-                                  Map<String, dynamic> data = message.data();
-                                  final messageText = data["text"];
-                                  final messageSender = data['sender'];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 20.0),
+                              child: ListView.builder(
+                                  itemCount: snapshot.data!.docs.length,
+                                  itemBuilder: (context, i) {
+                                    final message = snapshot.data!.docs[i];
+                                    Map<String, dynamic> data = message.data();
+                                    final messageText = data["text"];
+                                    final messageSender = data['sender'];
+                                    //on recupere l'email de l'utilisateur connecté 
+                                    final currentUserEmail =
+                                        loggedInUser!.email;
 
-                                  return Center(
-                                    child: Text(
-                                        '$messageText from $messageSender'),
-                                  );
-                                });
+                                    return TextBubble(
+                                      messageText: messageText,
+                                      messageSender: messageSender,
+                                      isMe: currentUserEmail ==
+                                          data['employeeEmail'],
+                                    );
+                                  }),
+                            );
                           } else {
-                            return const CircularProgressIndicator();
+                            return const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.green),
+                            );
                           }
                         },
                       ),
@@ -121,6 +140,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         children: <Widget>[
                           Expanded(
                             child: TextField(
+                              controller: messageTextController,
                               onChanged: (value) {
                                 //Do something with the user input.
                                 messageText = value;
@@ -132,6 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             onPressed: () {
                               //messageText + loggedInUser['employeeName']
 
+                              messageTextController.clear();
                               _firestore
                                   .collection('messages')
                                   .add({'text': messageText, 'sender': name});
@@ -150,5 +171,51 @@ class _ChatScreenState extends State<ChatScreen> {
             }),
           );
         });
+  }
+}
+
+class TextBubble extends StatelessWidget {
+  final String messageText;
+  final String messageSender;
+  final bool isMe;
+  const TextBubble({
+    Key? key,
+    required this.isMe,
+    required this.messageText,
+    required this.messageSender,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              messageSender,
+              style: const TextStyle(color: Colors.black54),
+            ),
+            Material(
+              elevation: 5.0,
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
+              color: isMe ? Colors.blueGrey : Colors.white60,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                child: Text(
+                  messageText,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
