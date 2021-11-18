@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:staffchat/constants.dart';
 
-User? loggedInUser;
+User loggedInUser = FirebaseAuth.instance.currentUser!;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -112,15 +112,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                     Map<String, dynamic> data = message.data();
                                     final messageText = data["text"];
                                     final messageSender = data['sender'];
-                                    //on recupere l'email de l'utilisateur connecté 
-                                    final currentUserEmail =
-                                        loggedInUser!.email;
-
+                                    //on recupere l'email de l'utilisateur connecté
+                                    final currentUserEmail = loggedInUser.email;
                                     return TextBubble(
                                       messageText: messageText,
                                       messageSender: messageSender,
-                                      isMe: currentUserEmail ==
-                                          data['employeeEmail'],
+                                      isMe: messageSender ==
+                                          userData['employeeName'],
                                     );
                                   }),
                             );
@@ -153,9 +151,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               //messageText + loggedInUser['employeeName']
 
                               messageTextController.clear();
-                              _firestore
-                                  .collection('messages')
-                                  .add({'text': messageText, 'sender': name});
+                              _firestore.collection('messages').add({
+                                'text': messageText,
+                                'sender': name,
+                              });
                             },
                             child: const Text(
                               'Send',
