@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late String name;
   late String staffCode;
   late String messageText;
-  List<Text> messagesWidgets = [];
+  List<Widget> messagesWidgets = [];
 
   @override
   void initState() {
@@ -89,23 +91,21 @@ class _ChatScreenState extends State<ChatScreen> {
             StreamBuilder<QuerySnapshot>(
               stream: _firestore.collection('messages').snapshots(),
               builder: (context, snapshot) {
-                try {
-                  if (snapshot.hasData) {
-                    final messages = snapshot.data!.docs;
+                
+                if (snapshot.hasData) {
 
-                    for (var message in messages) {
-                      final messageText = message["text"];
-                      final messageSender = message['Sender'];
-                      final messageWidget = Text(
-                        '$messageText from $messageSender',
-                        style: const TextStyle(color: Colors.red),
-                      );
+                  // Map<String, dynamic> data = docs.data()! as  Map<String, dynamic>;
+                  final messages = snapshot.data!.docs;
 
-                      messagesWidgets.add(messageWidget);
-                    }
+                  for (var message in messages) {
+                    final messageText = message["text"];
+                    final messageSender = message['Sender'];
+
+                    messagesWidgets
+                        .add(Text('$messageText from $messageSender'));
                   }
-                } catch (e) {
-                  print(e.toString());
+                } else {
+                  return const Text('no data available');
                 }
                 return Column(children: messagesWidgets);
               },
