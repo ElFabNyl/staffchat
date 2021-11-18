@@ -107,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   horizontal: 10.0, vertical: 20.0),
                               child: ListView.builder(
                                   itemCount: snapshot.data!.docs.length,
-                                  reverse : true,
+                                  // reverse : true,
                                   itemBuilder: (context, i) {
                                     final message = snapshot.data!.docs[i];
                                     
