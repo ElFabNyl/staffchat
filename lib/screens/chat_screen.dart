@@ -76,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       // //Implement logout functionality
                       _auth.signOut();
-                      Navigator.pushReplacementNamed(context, 'login_screen');
+                      Navigator.pop(context);
                     }),
               ],
               title: const Text('Globexcam Staff Chat'),
@@ -99,7 +99,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     //here we transform the streams into widgets
                     Expanded(
                       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: _firestore.collection('messages').snapshots(),
+                        stream: _firestore
+                            .collection('messages')
+                            .orderBy("createdAt", descending: false)
+                            .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Padding(
@@ -107,14 +110,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                   horizontal: 10.0, vertical: 20.0),
                               child: ListView.builder(
                                   itemCount: snapshot.data!.docs.length,
-                                  reverse : true,
                                   itemBuilder: (context, i) {
                                     final message = snapshot.data!.docs[i];
-                                    
                                     Map<String, dynamic> data = message.data();
                                     final messageText = data["text"];
                                     final messageSender = data['sender'];
                                     //on recupere l'email de l'utilisateur connecté
+                                    final currentUserEmail = loggedInUser.email;
                                     return TextBubble(
                                       messageText: messageText,
                                       messageSender: messageSender,
@@ -155,6 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               _firestore.collection('messages').add({
                                 'text': messageText,
                                 'sender': name,
+                                "createdAt": Timestamp.now()
                               });
                             },
                             child: const Text(
@@ -190,8 +193,7 @@ class TextBubble extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               messageSender,
@@ -199,23 +201,18 @@ class TextBubble extends StatelessWidget {
             ),
             Material(
               elevation: 5.0,
-              borderRadius: isMe
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30))
-                  : const BorderRadius.only(
-                      topRight: Radius.circular(30),
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30)),
-              color: isMe ? Colors.blueGrey : Colors.white,
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
+              color: isMe ? Colors.blueGrey : Colors.white60,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                 child: Text(
                   messageText,
-                  style: TextStyle(
-                      color: isMe ? Colors.white : Colors.black54,
+                  style: const TextStyle(
+                      color: Colors.white,
                       fontSize: 17.0,
                       fontWeight: FontWeight.w800),
                 ),
