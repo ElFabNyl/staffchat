@@ -209,7 +209,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               'employeeRole': employeeRole
                             });
 
-                            Navigator.pop(context);
+                             Navigator.pushReplacementNamed(
+                          context, 'login_screen');
                             setState(() {
                               showSpinner = false;
                             });

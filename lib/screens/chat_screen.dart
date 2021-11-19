@@ -68,15 +68,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         //Implement add staff
-                        Navigator.pushReplacementNamed(
-                            context, 'register_screen');
+                        Navigator.pushReplacementNamed(context, 'register_screen');
                       }),
                 IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       // //Implement logout functionality
                       _auth.signOut();
-                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                          context, 'login_screen');
                     }),
               ],
               title: const Text('Globexcam Staff Chat'),
@@ -115,8 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     Map<String, dynamic> data = message.data();
                                     final messageText = data["text"];
                                     final messageSender = data['sender'];
-                                    //on recupere l'email de l'utilisateur connecté
-                                    final currentUserEmail = loggedInUser.email;
+
                                     return TextBubble(
                                       messageText: messageText,
                                       messageSender: messageSender,
@@ -193,7 +192,8 @@ class TextBubble extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               messageSender,
@@ -201,11 +201,16 @@ class TextBubble extends StatelessWidget {
             ),
             Material(
               elevation: 5.0,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30)),
-              color: isMe ? Colors.blueGrey : Colors.white60,
+              borderRadius: isMe
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30))
+                  : const BorderRadius.only(
+                      topRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30)),
+              color: isMe ? Colors.blueGrey : Colors.teal,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
